@@ -2,6 +2,15 @@ import json
 
 from PIL import Image, ImageDraw
 
+MAP_EDGE_SIZE = 687134
+MAP_TILE_SIZE = 512
+MAP_TILE_COUNT = 44
+MAP_SIZE = MAP_TILE_SIZE * MAP_TILE_COUNT
+
+MAP_SCALE = MAP_EDGE_SIZE / MAP_SIZE
+MAP_CENTER_X = -40532.004
+MAP_CENTER_Y = 131446.33
+
 
 def parse_asset_path(asset_path: str) -> str:
     """
@@ -64,11 +73,11 @@ def load_and_stitch(data, tile_size=512, output_path="output.webp"):
 
 
 def world_pos_to_map_pos(world_x, world_y):
-    map_x = (world_x + 40532.004) * (1 / 30)
-    map_y = (world_y - 131446.33) * (1 / 30)
+    map_x = (world_x - MAP_CENTER_X) / MAP_SCALE
+    map_y = (world_y - MAP_CENTER_Y) / MAP_SCALE
 
-    map_x = 11264 + map_x
-    map_y = 11264 + map_y
+    map_x = MAP_SIZE // 2 + map_x
+    map_y = MAP_SIZE // 2 + map_y
 
     return int(map_x), int(map_y)
 
@@ -90,7 +99,7 @@ def draw_marker(
 if __name__ == "__main__":
     bigmap = load_and_stitch(
         "XL_map_bigworld_test.json",
-        tile_size=512,
+        tile_size=MAP_TILE_SIZE,
         output_path="bigmap_total.png",
     )
 
